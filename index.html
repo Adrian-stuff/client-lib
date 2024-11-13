@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>library</title>
+</head>
+
+<body>
+    <h1>Library Record</h1>
+    <div id="data-table-div"></div>
+    <script>
+        // API details
+        const baseURL = "https://api.jsonbin.io/v3/b/";
+        const collectionURL = "https://api.jsonbin.io/v3/c/6733735dacd3cb34a8a77607/bins";
+        const headers = {
+            "X-Master-Key": "$2a$10$2T0yr1CzfgagtTgJ7is1Vu7UjC8arWexIkD0rpZ/u9.6GTlx.ciji",
+            "Content-Type": "application/json"
+        };
+
+        fetch(collectionURL, { headers })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Network response was not ok " + response.statusText);
+                }
+                return response.json(); // Parse the JSON data
+            })
+            .then(data => {
+                return fetchAllBins(data); // Pass the records to fetchAllBins
+            })
+            .then(binDataArray => {
+                displayRecordTable(binDataArray);
+                console.log("All bin data:", binDataArray); // Log the array with all bin data
+
+            })
+            .catch(error => {
+                console.error("Fetch error:", error); // Log any errors
+            });
+
+        async function fetchAllBins(records) {
+            const binDataArray = []; // Array to store all fetched bin data
+
+            for (const item of records) {
+                const binId = item.record; // Access the bin ID from the 'record' property
+                const url = `${baseURL}${binId}`;
+
+                try {
+                    const response = await fetch(url, { headers });
+                    if (!response.ok) throw new Error(`Failed to fetch bin ${binId}: ${response.statusText}`);
+
+                    const binData = await response.json();
+                    binDataArray.push(binData); // Store each bin data in the array
+                } catch (error) {
+                    console.error("Error fetching bin data:", error);
+                }
+            }
+
+            return binDataArray; // Return the array with all bin data
+        }
+        function displayRecordTable(data) {
+            // Find the target div by ID
+            const targetDiv = document.getElementById("data-table-div");
+
+            // Initialize HTML for the table
+            let tableHTML = `
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Section</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+            // Loop through each item in the data array and add a row for each `record`
+            data.forEach(item => {
+                const record = item.record;
+                tableHTML += `
+            <tr>
+                <td>${record.name}</td>
+                <td>${record.section}</td>
+                <td>${record.date}</td>
+                <td>${record.time}</td>
+            </tr>
+        `;
+            });
+
+            // Close the table
+            tableHTML += `
+            </tbody>
+        </table>
+    `;
+
+            // Update the inner HTML of the target div
+            targetDiv.innerHTML = tableHTML;
+        }
+    </script>
+</body>
+
+</html>
