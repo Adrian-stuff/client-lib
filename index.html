@@ -4,12 +4,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>library</title>
+    <title>Library Logbook</title>
+    <!-- Google Font: Libre Baskerville for headings, Open Sans for content -->
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Apply fonts to the body */
+        body {
+            font-family: 'Open Sans', sans-serif;
+            margin: 0;
+            height: 100vh;
+            background-color: #f4f6f9; /* Soft grayish background */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding-top: 50px;
+        }
+
+        /* Title styling */
+        h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 50px;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Style the div containing the table */
+        #data-table-div {
+            width: 90%;
+            max-width: 1000px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Light shadow for modern look */
+            border-radius: 8px;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            color: #555;
+            font-size: 1.2em;
+        }
+
+        th {
+            background-color: #4e79a7; /* Blue color for header */
+            color: #fff;
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+        }
+
+        td {
+            background-color: #f9f9f9; /* Light gray background for table rows */
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #fafafa; /* Slightly darker gray for even rows */
+        }
+
+        /* Hover effect on table rows */
+        tr:hover {
+            background-color: #eef7ff; /* Light blue hover effect */
+            cursor: pointer;
+        }
+
+        /* Styling for responsive tables */
+        @media (max-width: 768px) {
+            table {
+                font-size: 1em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        /* Footer section for some extra design */
+        footer {
+            margin-top: 50px;
+            color: #777;
+            font-size: 14px;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Library Record</h1>
-    <div id="data-table-div"></div>
+    <h1>Library Logbook</h1>
+    <div id="data-table-div"></div> <!-- Table container -->
+
+    <footer>
+        <p>&copy; 2024 Library Logbook. All Rights Reserved.</p>
+    </footer>
+
     <script>
         // API details
         const baseURL = "https://api.jsonbin.io/v3/b/";
@@ -32,7 +128,6 @@
             .then(binDataArray => {
                 displayRecordTable(binDataArray);
                 console.log("All bin data:", binDataArray); // Log the array with all bin data
-
             })
             .catch(error => {
                 console.error("Fetch error:", error); // Log any errors
@@ -58,42 +153,43 @@
 
             return binDataArray; // Return the array with all bin data
         }
+
         function displayRecordTable(data) {
             // Find the target div by ID
             const targetDiv = document.getElementById("data-table-div");
 
             // Initialize HTML for the table
             let tableHTML = `
-        <table border="1" cellpadding="5" cellspacing="0">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Section</th>
-                    <th>Date</th>
-                    <th>Time</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Section</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
 
             // Loop through each item in the data array and add a row for each `record`
             data.forEach(item => {
                 const record = item.record;
                 tableHTML += `
-            <tr>
-                <td>${record.name}</td>
-                <td>${record.section}</td>
-                <td>${record.date}</td>
-                <td>${record.time}</td>
-            </tr>
-        `;
+                    <tr>
+                        <td>${record.name}</td>
+                        <td>${record.section}</td>
+                        <td>${record.date}</td>
+                        <td>${record.time}</td>
+                    </tr>
+                `;
             });
 
             // Close the table
             tableHTML += `
-            </tbody>
-        </table>
-    `;
+                    </tbody>
+                </table>
+            `;
 
             // Update the inner HTML of the target div
             targetDiv.innerHTML = tableHTML;
